@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from user_details import User 
+from rest_framework.exceptions import ValidationError
 import re
 
 class UserSerializer(serializers.Modelserializer):
@@ -24,15 +25,22 @@ class UserSerializer(serializers.Modelserializer):
 
 
        def validate_username(self, value):
-            if value in User.objects.values_list('user_name', flat=True):
-              raise serializers.ValidationError("Username already exists......")
-            
-
+            if value is not None:
+               if User.objects.filter(user_name=value).exists():
+                   raise serializers.ValidationError("Username already exists.") 
+                   
             return value
+       
+
+       def validate_is_active(self, value):
+        if not isinstance(value, bool):
+            raise serializers.ValidationError("(True/False)")
+        return value
+
        
        def validate_email_id(self,value):
             if "@" not in value:
-              raise serializers.ValidationError("Please enter a valid email address")
+              raise serializers.ValidationError("Please enter a valid email")
             #icontai@gmail.com
             
             return value
@@ -40,12 +48,12 @@ class UserSerializer(serializers.Modelserializer):
        def validate_password(self,value):
             validate_value_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$'
             if not re.match(validate_value_regex, value):
-               raise serializers.ValidationError("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")
-            
-          
+                  raise serializers.ValidationError("Password")
             return value
        
+       def validate_user(self, value):
+        if not User.exists():
+            raise ValidationError(f"User does not exist.")
+        return value
 
-       def validate_user(self,data):
-           return data
 

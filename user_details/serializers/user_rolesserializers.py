@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from user_rolesserializers import UserRole
+from user_details.models import User
+from rest_framework.exceptions import ValidationError
 
 class UserRoleSerializer(serializers.ModelSerializer):
         id = serializers.BigAutoField(max_length=255, unique=True, primary_key=True) 
@@ -18,5 +20,30 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 def validate_user_role(self,data):
      if UserRole.exists():
-            raise serializers.ValidationError("This user already has this role assigned.")
+            raise serializers.ValidationError("This user already has role assigned.")
      return data
+
+
+def validate_scope(self, value):
+        if not value:
+            raise serializers.ValidationError("null ")
+        return value
+
+
+def validate_role(self, value):
+        if not value:
+            raise serializers.ValidationError("Role cannot be null")
+        return value
+
+
+def validate_is_active(self, value):
+        if not isinstance(value, bool):
+            raise serializers.ValidationError("(True/False)")
+        return value
+
+def validate_user(self, value):
+        if not User.exists():
+            raise ValidationError(f"User does not exist.")
+        return value
+
+

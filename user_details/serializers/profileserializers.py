@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from profile import Profile
+from user_details.models import User
+from django.core.exceptions import ValidationError
 
 class ProfileSerializer(serializers.ModelSerializers):
         id = serializers.BigAutoField(unique=True, primary_key=True) 
@@ -14,5 +16,20 @@ class Meta:
         read_only_feild = ['id']
 
 
-        def validate_profile(self,data):
-             return data
+
+def validate_user(self, value):
+        if not User.exists():
+            raise ValidationError(f"User does not exist.")
+        return value
+
+def validate_app(self, value):
+        
+        if not value: 
+            raise ValidationError("App field cannot be empty.")
+        return value
+
+
+def validate_profile(self,value, ):
+             if not value.strip():  #  removes spaces and checks for non-empty content
+                raise ValidationError("The profile cannot be empty")
+             return value
