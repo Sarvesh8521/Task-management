@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from user_details import User
+from user_details import User 
+import re
 
 class UserSerializer(serializers.Modelserializer):
-       id = serializers.BigAutoField(unique=True, primary_key=True)
-       user_id = serializers.BigAutoField(primary_key=True, editable=False, unique=True)
+       id = serializers.BigAutoField( primary_key=True)
+       user_id = serializers.BigAutoField(primary_key=True)
        user_name = serializers.CharField(max_length=50, unique=True)
        first_name = serializers.CharField(max_length=50)
        last_name = serializers.CharField(max_length=50)
@@ -23,20 +24,28 @@ class UserSerializer(serializers.Modelserializer):
 
 
        def validate_username(self, value):
+            if value in User.objects.values_list('user_name', flat=True):
+              raise serializers.ValidationError("Username already exists......")
+            
+
             return value
        
        def validate_email_id(self,value):
+            if "@" not in value:
+              raise serializers.ValidationError("Please enter a valid email address")
             #icontai@gmail.com
             
             return value
        
        def validate_password(self,value):
-            if len(value) < 8:
-             raise ValueError("Password must be at least 8 characters long.")
+            validate_value_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$'
+            if not re.match(validate_value_regex, value):
+               raise serializers.ValidationError("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")
             
+          
             return value
        
 
-       def validate(self,data):
+       def validate_user(self,data):
            return data
 

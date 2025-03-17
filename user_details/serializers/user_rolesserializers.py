@@ -3,7 +3,7 @@ from user_rolesserializers import UserRole
 
 class UserRoleSerializer(serializers.ModelSerializer):
         id = serializers.BigAutoField(max_length=255, unique=True, primary_key=True) 
-        user = serializers.ForeignKey( on_delete=serializers.CASCADE)
+        user = serializers.ForeignKey(max_length=255, on_delete=serializers.CASCADE,)
         scope = serializers.ForeignKey()
         role = serializers.ForeignKey(on_delete=serializers.CASCADE)
         is_active = serializers.BooleanField(default=True)
@@ -17,4 +17,6 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 
 def validate_user_role(self,data):
+     if UserRole.exists():
+            raise serializers.ValidationError("This user already has this role assigned.")
      return data

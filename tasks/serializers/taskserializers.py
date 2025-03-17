@@ -3,7 +3,7 @@ from tasks.models import Task
 
 class TaskSerializer(serializers.ModelSerializer):
     id = serializers.BigAutoField(primary_key=True)  
-    description = serializers.TextField()
+    description = serializers.TextField(max_length=500)
     project = serializers.ForeignKey(on_delete=serializers.CASCADE,)
     users = serializers.ForeignKey(max_length=255, unique=True, primary_key=True) 
     status = serializers.CharField(max_length=20, default="todo")
@@ -24,5 +24,5 @@ class Meta:
     exclude = ['id','description','sprint','release_version',]
     fields = ['id', 'description', 'project', 'users', 'status', 'start_date', 'end_date', 'sprint', 'release_version',  'creation_date', 'updation_date', 'is_active']
 
-    def create(self, validated_data):
-        return Task.objects.create(**validated_data)
+    def task_create(self, validated_data):
+        return Task(**validated_data)

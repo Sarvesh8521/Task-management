@@ -22,7 +22,7 @@ class Project(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     release_version = models.CharField(max_length=100, blank=True)
-    sprint = models.IntegerField(default=1)
+    sprint = models.CharField(max_length=100, null=True, blank=True, default=1) #models.IntegerField(default=1)
     creation_date = models.DateTimeField(auto_now_add=True)
     updation_date = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)

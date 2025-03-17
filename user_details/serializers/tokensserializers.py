@@ -3,7 +3,7 @@ from tokensserializers import Token
 
 class TokenSerializer(serializers.ModelSerializer):
         id = serializers.BigAutoField(primary_key=True) 
-        user = serializers.ForeignKey(on_delete=serializers.CASCADE)
+        user = serializers.ForeignKey(max_length=255, on_delete=serializers.CASCADE)
         access_token = serializers.TextField(unique=True)
         token_type = serializers.CharField(max_length=10)
         refresh_token = serializers.ForeignKey(on_delete=serializers.CASCADE)
