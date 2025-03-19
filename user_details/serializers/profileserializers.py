@@ -30,6 +30,6 @@ def validate_app(self, value):
 
 
 def validate_profile(self,value, ):
-             if not value.strip():  #  removes spaces and checks for non-empty content
+             if not value.strip():  
                 raise ValidationError("The profile cannot be empty")
              return value
