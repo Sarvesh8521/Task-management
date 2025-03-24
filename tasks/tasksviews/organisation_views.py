@@ -4,22 +4,21 @@ from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-import json
 import logging
 
 from user_details.models import User
 from tasks.models import Organization
-from tasks.serializers.organizationserializers import OrganizationSerializer
+from tasks.serializers import OrganizationSerializer
+from tasks.serializers import log_info_message, get_response, CustomExceptionHandler, generic_error_2
+
 
 logger = logging.getLogger("django")
 
 @csrf_exempt
 @swagger_auto_schema(
     method="post",
-    request_body=organizationserializer,
-    responses={201: Organizationserializer},
+    request_body=OrganizationSerializer,
+    responses={201: OrganizationSerializer},
     operation_id="Create Organization"
 )
 @api_view(["POST"])
@@ -28,13 +27,13 @@ def create_organization(request):
     response_obj = None
 
     try:
-        serializer = OrganizationSerializer(data=request.data)
+        serializer = OrganizationSerializer(request.data)
         if serializer.is_valid():
             organization = serializer.save()
             response_obj = serializer.data
-            return JsonResponse(response_obj, status=status.HTTP_201_CREATED)
+            return JsonResponse(response_obj)
         else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.errors)
 
     except CustomExceptionHandler as e:
         logger.exception(f"Custom Exception in create organization: {e}")
@@ -44,8 +43,10 @@ def create_organization(request):
         logger.exception(f"Exception in create organization: {e}")
         response_obj = get_response(generic_error_2)
 
-    logger.info("Response in create organization --> %s", response_obj)
-    return JsonResponse(response_obj, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    logger.info("Response in create organization %s", response_obj)
+    return JsonResponse(response_obj)
+
+
 
 
 @csrf_exempt
@@ -56,22 +57,22 @@ def create_organization(request):
     operation_id="Update Organization"
 )
 @api_view(["PUT"])
-def update_organization(request, org_id):
-    logger.info(log_info_message(request, "Request to update organization with ID: %s", org_id))
+def update_organization(request):
+    logger.info(log_info_message(request, "Request to update organization with ID: %s"))
     response_obj = None
 
     try:
-        organization = Organization.objects.get(id=org_id)
-        serializer = OrganizationSerializer(organization, data=request.data, partial=True)
+        organization = Organization.objects.get(request.data)
+        serializer = OrganizationSerializer(organization, data=request.data,)
         if serializer.is_valid():
             organization = serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+            return JsonResponse(serializer.data)
         else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.errors)
 
     except Organization.DoesNotExist:
-        response_obj = {"error": "Organization not found."}
-        return JsonResponse(response_obj, status=status.HTTP_404_NOT_FOUND)
+        response_obj = { "Organization not found."}
+        return JsonResponse(response_obj)
 
     except CustomExceptionHandler as e:
         logger.exception(f"Custom Exception in update organization: {e}")
@@ -82,4 +83,4 @@ def update_organization(request, org_id):
         response_obj = get_response(generic_error_2)
 
     logger.info("Response in update organization --> %s", response_obj)
-    return JsonResponse(response_obj, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return JsonResponse(response_obj)

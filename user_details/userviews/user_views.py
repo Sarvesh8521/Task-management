@@ -30,17 +30,17 @@ def create_user(request):
     response_obj = None
 
     try:
-        serializer = userserializers(data=request.data)
+        serializer = userserializers(request.data)
         if serializer.is_valid():
             user = serializer.save()
             response_obj = serializer.data
-            return JsonResponse(response_obj, status=status.HTTP_201_CREATED)
+            return JsonResponse(response_obj)
         else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.errors)
 
     except Exception as e:
         logger.exception(f"Exception in create user: {e}")
-        response_obj = {"error": "An error occurred while creating the user."}
+        response_obj = {"An error occurred while creating the user."}
         return JsonResponse(response_obj)
 
 
@@ -76,12 +76,12 @@ def get_user(request, user_id):
         return JsonResponse(serializer.data)
 
     except User.DoesNotExist:
-        response_obj = {"error": "User  not found."}
+        response_obj = { "User  not found."}
         return JsonResponse(response_obj)
 
     except Exception as e:
         logger.exception(f"Exception in get user: {e}")
-        response_obj = {"error": "An error occurred while retrieving the user."}
+        response_obj = { "An error occurred while retrieving the user."}
         return JsonResponse(response_obj)
 
 
@@ -102,8 +102,8 @@ def update_user(request, user_id):
     response_obj = None
 
     try:
-        user = User.objects.get(user_id=user_id)
-        serializer = userserializers(user, data=request.data, partial=True)
+        user = User.objects.get(user_id)
+        serializer = userserializers(user, data=request.data,)
         if serializer.is_valid():
             user = serializer.save()
             return JsonResponse(serializer.data)
@@ -111,12 +111,12 @@ def update_user(request, user_id):
             return JsonResponse(serializer.errors)
 
     except User.DoesNotExist:
-        response_obj = {"error": "User  not found."}
+        response_obj = { "User  not found."}
         return JsonResponse(response_obj)
 
     except Exception as e:
         logger.exception(f"Exception in update user: {e}")
-        response_obj = {"An error occurred while updating"}
+        response_obj = {" error  while updating"}
         return JsonResponse(response_obj)
 
 

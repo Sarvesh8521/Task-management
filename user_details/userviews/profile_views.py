@@ -30,7 +30,7 @@ def create_profile(request):
     response_data = None
 
     try:
-        serializer = userserializers.ProfileSerializer(data=request.data)
+        serializer = userserializers.ProfileSerializer(request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -40,14 +40,14 @@ def create_profile(request):
             #return JsonResponse(serializer.errors)
     except Exception as e:
             logger.exception({e})
-            response_data = {'error': 'An error occurred'}
-            return JsonResponse(response_data, )
+            response_data = { 'An error occurred'}
+            return JsonResponse(response_data )
         
     
     except Exception as e:
         logger.exception({e})
-        response_data = {'error': 'An error occurred'}
-        return JsonResponse(response_data, )
+        response_data = { 'An error occurred'}
+        return JsonResponse(response_data )
         
 
 
@@ -62,11 +62,11 @@ def get_profile(request):
         response_data = serializer.data
         return JsonResponse(response_data)
     except User.DoesNotExist:
-        response_data = {'error': 'User not found'}
+        response_data =  {'User not found'}
         return JsonResponse(response_data)
     except Exception as e:
         logger.exception({e})
-        response_data = {'error': 'An error occurred'}
+        response_data = { 'An error occurred'}
         return JsonResponse(response_data, )
     
 
@@ -87,11 +87,11 @@ def update_profile(request):
             #return JsonResponse(serializer.errors)
     except Exception as e:
             logger.exception({e})    
-            response_data = {'error': 'An error occurred'}
-            return JsonResponse(response_data, )
+            response_data = {'An error occurred'}
+            return JsonResponse(response_data)
     except Exception as e:
         logger.exception({e})
-        response_data = {'error': 'An error occurred'}
+        response_data = { 'An error occurred'}
         return JsonResponse(response_data, )
     
 
@@ -103,16 +103,16 @@ def delete_profile(request):
         user = request.user
         profile = user.profile
         profile.delete()
-        response_data = {'message': 'Profile deleted'}
+        response_data = { 'Profile deleted'}
         return JsonResponse(response_data)
     except User.DoesNotExist:
-        response_data = {'error': 'User not found'}
+        response_data = { 'User not found'}
         return JsonResponse(response_data)
 
     except Exception as e:
         logger.exception({e})
-        response_data = {'error': 'An error occurred'}
-        return JsonResponse(response_data, )
+        response_data = { 'An error occurred'}
+        return JsonResponse(response_data )
     
 
 @api_view(['GET'])
@@ -121,11 +121,11 @@ def get_all_profiles(request):
     response_data = None
     try:
         profiles = User.objects.all()
-        serializer = userserializers.ProfileSerializer(profiles, many=True)
+        serializer = userserializers.ProfileSerializer(profiles)
         response_data = serializer.data
         return JsonResponse(response_data)
     except Exception as e:
         logger.exception({e})
-        response_data = {'error': 'An error occurred'}
+        response_data = { 'An error occurred'}
         return JsonResponse(response_data )
 
