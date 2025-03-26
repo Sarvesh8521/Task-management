@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 # import os
 from pathlib import Path
+import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,8 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'tasks',
     'user_details'
-    'django.contrib.auth'
-    #'phonenumber_field',
+    
 ]
 
 MIDDLEWARE = [
@@ -78,17 +79,26 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',   # Your PostgreSQL database name
-        'USER': 'myuser',       # Your PostgreSQL username
-        'PASSWORD': 'mypassword',  # Your PostgreSQL password
-        'HOST': 'localhost',  # Change if using a remote database
-        'PORT': '5432',  # Default PostgreSQL port
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_NAME"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOST"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
+
+
+#DATABASES = {
+   # 'default': {
+       #   'USER': 'myuser',       # Your PostgreSQL username
+    #    'PASSWORD': 'mypassword',  # Your PostgreSQL password
+   #     'HOST': 'localhost',  # Change if using a remote database
+  #      'PORT': '5432',  # Default PostgreSQL port
+ #   }
+#}
 
 
 #DATABASES = {
@@ -99,8 +109,7 @@ DATABASES = {
 #}
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -139,7 +148,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'tasks.User'
+
+
+AUTH_USER_MODEL = 'user_detail.models'
+AUTH_USER_MODEL = 'tasks.models'
 
 from datetime import timedelta
 
@@ -154,13 +166,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-#REST_FRAMEWORK = {
-    #'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework_simplejwt.authentication.JWTAuthentication',
-   # ),
-#}
 
-#permissions
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -171,39 +177,3 @@ REST_FRAMEWORK = {
 }
 
 
-# Logging configuration
-
-#LOGGING = {
-    #'version': 1,
-    #'disable_existing_loggers': False,
-    #'formatters': {
-        #'verbose': {
-       #     'format': '{levelname} {asctime} {module} {message}',
-      #      'style': '{',
-     #   },
-    #},
-    #'handlers': {
-        #'file': {
-            #'level': 'INFO',
-           # 'class': 'logging.FileHandler',
-          #  'filename': os.path.join(BASE_DIR, 'logs/app.log'),  # file
-         #   'formatter': 'verbose',
-        #},
-        #'console': {
-        #    'level': 'DEBUG',
-       #     'class': 'logging.StreamHandler',
-      #      'formatter': 'verbose',
-     #   },
-    #},
-    #'loggers': {
-      #  'django': {
-     #       'handlers': ['file', 'console'],
-    #        'level': 'INFO',
-   #         'propagate': True,
-  #      },
- #   },
-#}
-
-
-
-#
