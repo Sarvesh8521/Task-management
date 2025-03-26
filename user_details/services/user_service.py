@@ -4,13 +4,13 @@ from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 
 from user_details import serializers as userserializers
-
+from user_service import CustomExceptionHandler
 from user_details.models import User
 from user_details.serializers import UserSerializer
 from user_service import UserNotFoundException, UserServiceException
 from user_service import success, generic_error
 from .user_service import get_response 
-from user_service import CustomExceptionHandler
+
 
 
 logger = logging.getLogger("django")
