@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'tasks',
-    'user_details'
+    'user_details',
+    'tasks.apps.TasksConfig'
     
 ]
 
@@ -82,31 +83,17 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_NAME"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOST"),
+        "NAME": os.environ.get("mytaskdb"),
+        "USER": os.environ.get("mytaskuser"),
+        "PASSWORD": os.environ.get("root"),
+        "HOST": os.environ.get("localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
 
 
-#DATABASES = {
-   # 'default': {
-       #   'USER': 'myuser',       # Your PostgreSQL username
-    #    'PASSWORD': 'mypassword',  # Your PostgreSQL password
-   #     'HOST': 'localhost',  # Change if using a remote database
-  #      'PORT': '5432',  # Default PostgreSQL port
- #   }
-#}
 
 
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-   #     'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-#}
 
 
 
@@ -150,8 +137,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = 'user_detail.models'
-AUTH_USER_MODEL = 'tasks.models'
+#AUTH_USER_MODEL = 'user_detail.models'
+#AUTH_USER_MODEL = 'tasks.models'
+#AUTH_USER_MODEL = 'tasks.CustomUser'
+AUTH_USER_MODEL = 'user_detail.User'
+
 
 from datetime import timedelta
 
