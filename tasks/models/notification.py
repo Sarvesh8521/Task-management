@@ -8,11 +8,11 @@ from django.utils import timezone
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = [
-        ('TASK_ASSIGNED', ),
-        ('PROJECT_ASSIGNED', ),
-        ('ORG_UPDATE', ),
-        ('TASK_COMMENT', ),
-    ]
+    ('TASK_ASSIGNED', 'TASK_ASSIGNED'),
+    ('PROJECT_ASSIGNED', 'PROJECT_ASSIGNED'),
+    ('ORG_UPDATE', 'ORG_UPDATE'),
+    ('TASK_COMMENT', 'TASK_COMMENT'),
+   ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notify')  
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True, related_name='notify')  

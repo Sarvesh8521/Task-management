@@ -5,12 +5,25 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 import logging
 import json
-
+from tasks.serializers.taskserializers import TaskSerializer
 from tasks.models import Task
-from tasks.serializers import TaskSerializer
-from tasks.serializers import get_response, CustomExceptionHandler, log_info_message
+from tasks.serializers.utils import log_info_message, get_response
+
 
 logger = logging.getLogger("django")
+
+
+# def get_response(message, status="error"):
+#     return {"status": status, "message": message}
+
+# def CustomExceptionHandler(exc, context=None):
+#     return {"status": "error", "message": str(exc)}
+
+# def log_info_message(request, message):
+#     return f"{request.method} {request.path} - {message}"
+
+
+
 
 @csrf_exempt
 @swagger_auto_schema(
@@ -19,26 +32,21 @@ logger = logging.getLogger("django")
     responses={201: TaskSerializer},
     operation_id="Create Task"
 )
-
-
 @api_view(["POST"])
 def create_task(request):
     logger.info(log_info_message(request, " create task"))
     response_obj = None
     try:
-        serializer = TaskSerializer(request.data)
+        serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             task = serializer.save()
             response_obj = serializer.data
-            return JsonResponse(response_obj)
+            return JsonResponse(response_obj, safe=False)
         return JsonResponse(serializer.errors)
-    except CustomExceptionHandler as e:
-        logger.exception(f" Exception in create task: {e}")
-        response_obj = get_response(eval(str(e)))
     except Exception as e:
         logger.exception(f"Exception in create task: {e}")
         response_obj = get_response("generic_error")
-    return JsonResponse(response_obj, )
+    return JsonResponse(response_obj)
 
 @csrf_exempt
 @swagger_auto_schema(
@@ -47,20 +55,18 @@ def create_task(request):
     responses={200: TaskSerializer},
     operation_id="Update Task"
 )
-
-
 @api_view(["PUT"])
 def update_task(request):
-    logger.info(log_info_message(request, f"Request to update task "))
+    logger.info(log_info_message(request, "Request to update task"))
     try:
-        task = Task.objects.get(request.data)
-        serializer = TaskSerializer(task, data=request.data, )
+        task = Task.objects.get(id=request.data.get("id"))
+        serializer = TaskSerializer(task, data=request.data)
         if serializer.is_valid():
             task = serializer.save()
             return JsonResponse(serializer.data)
         return JsonResponse(serializer.errors)
     except Task.DoesNotExist:
-        return JsonResponse({ "Task not found."})
+        return JsonResponse({"error": "Task not found."})
     except Exception as e:
         logger.exception(f"Exception in update task: {e}")
         return JsonResponse(get_response("generic_error"))
@@ -83,9 +89,6 @@ def assign_task(request, task_id, user_id):
     except Exception as e:
         logger.exception(f"Exception in assign task: {e}")
         return JsonResponse(get_response("generic_error"))
-    
-
-
 
 @csrf_exempt
 @swagger_auto_schema(
@@ -98,12 +101,10 @@ def get_tasks(request):
     try:
         tasks = Task.objects.all()
         serializer = TaskSerializer(tasks, many=True)
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data, safe=False)
     except Exception as e:
         logger.exception(f"Exception in get tasks: {e}")
         return JsonResponse(get_response("generic_error"))
-
-
 
 @csrf_exempt
 @swagger_auto_schema(
@@ -116,11 +117,9 @@ def search_tasks(request):
     logger.info(log_info_message(request, f"Request to search tasks with query: {query}"))
     try:
         tasks = Task.objects.filter(name__icontains=query)
-        serializer = TaskSerializer(tasks)
-        return JsonResponse(serializer.data)
+        serializer = TaskSerializer(tasks, many=True)
+        return JsonResponse(serializer.data, safe=False)
     except Exception as e:
         logger.exception(f"Exception in search tasks: {e}")
         return JsonResponse(get_response("generic_error"))
-    
-
 

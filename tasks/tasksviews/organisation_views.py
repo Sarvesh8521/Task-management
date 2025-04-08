@@ -9,10 +9,33 @@ import logging
 from user_details.models import User
 from tasks.models import Organization
 from tasks.serializers import OrganizationSerializer
-from tasks.serializers import log_info_message, get_response, CustomExceptionHandler, generic_error_2
+from tasks.serializers.utils import log_info_message, get_response, CustomExceptionHandler, generic_error_2
 
 
 logger = logging.getLogger("django")
+
+
+
+# class CustomExceptionHandler(Exception):
+#     """Custom exception placeholder."""
+#     pass
+
+# def log_info_message(request, message):
+#     """Formats a basic log message."""
+#     return f"{request.method} {request.get_full_path()} - {message}"
+
+# def get_response(error_key):
+#     """Returns a basic error response."""
+#     responses = {
+#         "generic_error": {"error": "Something went wrong."},
+#         "generic_error_2": {"error": "Unexpected error occurred."}
+#     }
+#     return responses.get(error_key, {"error": "Unknown error occurred."})
+
+# generic_error_2 = "generic_error_2"
+
+
+
 
 @csrf_exempt
 @swagger_auto_schema(

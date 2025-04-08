@@ -1,0 +1,12 @@
+
+
+def get_response(message, status="error"):
+    return {"status": status, "message": message}
+
+def CustomExceptionHandler(exc, context=None):
+    return {"status": "error", "message": str(exc)}
+
+def log_info_message(request, message):
+    return f"{request.method} {request.path} - {message}"
+
+generic_error_2 = "An unexpected error occurred."
