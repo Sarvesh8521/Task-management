@@ -19,8 +19,8 @@ class FileUpload(models.Model):
         ('ZIP', 'Compressed Archive'),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)  
+    user = models.IntegerField()  
+    project = models.IntegerField()  
 
     Task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)  
     Task_Comment = models.ForeignKey(TaskComment, on_delete=models.CASCADE, null=True, blank=True)  

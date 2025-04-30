@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from user_details.models import User
+
 from rest_framework.exceptions import ValidationError
 import re
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  
-    user_id = serializers.IntegerField(read_only=True)  
+    user_id = serializers.UUIDField(read_only=True)  
     user_name = serializers.CharField(max_length=50)
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
@@ -19,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = []  
         read_only_fields = ['user_id']
-        fields = ['id', 'user_name', 'first_name', 'last_name', 'email_id', 'password', 'is_active', 'creation_date', 'updation_date']
+        fields = ['id','user_id', 'user_name', 'first_name', 'last_name', 'email_id', 'password', 'is_active', 'creation_date', 'updation_date']
 
     def validate_user_name(self, value): 
         if value is not None:
@@ -43,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Password must contain at least one uppercase, one lowercase, one number and one special character.")
         return value
 
-    def validate_user(self, value):  
+    def validate_User(self, value):  
         if not User.objects.exists():  
             raise ValidationError("User does not exist.")
         return value

@@ -6,15 +6,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  
     app = serializers.CharField(max_length=255)
     profile = serializers.CharField()  
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  
+    user_id = serializers.IntegerField()  
     class Meta:
         model = Profile
         exclude = [] 
-        fields = ['id', 'app', 'profile', 'user']  
+        fields = ['id', 'app', 'profile', 'user_id']  
         read_only_fields = ['id']  
 
-    def validate_user(self, value):
-        if not User.objects.filter(id=value.id).exists():
+    def validate_user_id(self, value):
+        if not User.objects.filter(id=value).exists():
             raise ValidationError("User does not exist.")
         return value
 

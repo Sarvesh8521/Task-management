@@ -1,20 +1,26 @@
 from django.urls import path, include
 from tasks.tasksviews import task_views, project_views, organisation_views
 from user_details.userviews import user_views, profile_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
+
+
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     path('users/', include([
         path('create/', user_views.create_user, name='create_user'),
         path('update/<int:user_id>/', user_views.update_user, name='update_user'),
-        path('search/', user_views.get_user, name='get_user'),  
+        path('search/<int:user_id>', user_views.get_user, name='get_user'),  
     ])),
 
     
    
     path('profiles/details/<int:user_id>/', profile_views.get_profile, name='get_profile'),
     path('profiles/update/<int:user_id>/', profile_views.update_profile, name='update_profile'),
-    path('profiles/create/<int:user_id>/', profile_views.create_profile, name='create_profile'),
+    path('profiles/create/', profile_views.create_profile, name='create_profile'),
 
     
     path('organizations/', include([
@@ -29,8 +35,7 @@ urlpatterns = [
 
 
     
-    path('tasks/', include([
-        path('create/', task_views.create_task, name='create_task'),
+    path('tasks/', include([path('create/', task_views.create_task, name='create_task'),
         path('update/<int:task_id>/', task_views.update_task, name='update_task'),
         path('assign/<int:task_id>/<int:user_id>/', task_views.assign_task, name='assign_task'),
         path('all/', task_views.get_tasks, name='get_tasks'),

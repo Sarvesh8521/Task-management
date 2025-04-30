@@ -10,8 +10,8 @@ class Profile(models.Model):
     id = models.BigAutoField(unique=True, primary_key=True) 
     app = models.CharField(max_length=255,)
     profile = models.TextField()
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user_id = models.UUIDField()
 
 
     def __str__(self):
-        return f"Profile of {self.user.user_name}"
+        return f"Profile of User ID {self.user_id}"

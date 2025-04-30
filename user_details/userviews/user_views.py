@@ -33,10 +33,10 @@ def create_user(request):
             serializer.save()
             return JsonResponse(serializer.data, safe=False)
         else:
-            return JsonResponse(serializer.errors, status=400, safe=False)
+            return JsonResponse(serializer.errors, safe=False)
     except Exception as e:
         logger.exception(f"Exception in create user: {e}")
-        return JsonResponse({"error": "An error occurred while creating the user."}, status=500)
+        return JsonResponse({"error": "An error occurred while creating the user."})
 
 
 @csrf_exempt

@@ -2,40 +2,17 @@ from drf_yasg import openapi
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import logging
-
 from user_details.models import User
 from tasks.models import Organization
 from tasks.serializers import OrganizationSerializer
-from tasks.serializers.utils import log_info_message, get_response, CustomExceptionHandler, generic_error_2
+
 
 
 logger = logging.getLogger("django")
-
-
-
-# class CustomExceptionHandler(Exception):
-#     """Custom exception placeholder."""
-#     pass
-
-# def log_info_message(request, message):
-#     """Formats a basic log message."""
-#     return f"{request.method} {request.get_full_path()} - {message}"
-
-# def get_response(error_key):
-#     """Returns a basic error response."""
-#     responses = {
-#         "generic_error": {"error": "Something went wrong."},
-#         "generic_error_2": {"error": "Unexpected error occurred."}
-#     }
-#     return responses.get(error_key, {"error": "Unknown error occurred."})
-
-# generic_error_2 = "generic_error_2"
-
-
-
 
 @csrf_exempt
 @swagger_auto_schema(
@@ -45,31 +22,23 @@ logger = logging.getLogger("django")
     operation_id="Create Organization"
 )
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def create_organization(request):
-    logger.info(log_info_message(request, "Request to create organization"))
-    response_obj = None
-
+    logger.info("create organization")
+    
     try:
-        serializer = OrganizationSerializer(request.data)
+        data = request.data.copy()
+        data["super_user"] = request.user.id
+        serializer = OrganizationSerializer(data=data)
+        
         if serializer.is_valid():
-            organization = serializer.save()
-            response_obj = serializer.data
-            return JsonResponse(response_obj)
-        else:
-            return JsonResponse(serializer.errors)
-
-    except CustomExceptionHandler as e:
-        logger.exception(f"Custom Exception in create organization: {e}")
-        response_obj = get_response(eval(str(e)))
-
+            serializer.save(super_user=request.user.id)  
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors)
     except Exception as e:
-        logger.exception(f"Exception in create organization: {e}")
-        response_obj = get_response(generic_error_2)
-
-    logger.info("Response in create organization %s", response_obj)
-    return JsonResponse(response_obj)
-
-
+        logger.exception(e)
+        return JsonResponse({'error': 'An error occurred while creating organization'})
+    
 
 
 @csrf_exempt
@@ -80,30 +49,22 @@ def create_organization(request):
     operation_id="Update Organization"
 )
 @api_view(["PUT"])
-def update_organization(request):
-    logger.info(log_info_message(request, "Request to update organization with ID: %s"))
-    response_obj = None
-
+def update_organization(request, org_id):
+    logger.info("Request to update organization")
     try:
-        organization = Organization.objects.get(request.data)
-        serializer = OrganizationSerializer(organization, data=request.data,)
+        organization = Organization.objects.get(id=org_id)
+        if organization.super_user != request.user.id:
+            return JsonResponse(
+                {"error": "You don't have permission to update this organization"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        serializer = OrganizationSerializer(organization, data=request.data)
         if serializer.is_valid():
             organization = serializer.save()
-            return JsonResponse(serializer.data)
-        else:
-            return JsonResponse(serializer.errors)
-
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors)
     except Organization.DoesNotExist:
-        response_obj = { "Organization not found."}
-        return JsonResponse(response_obj)
-
-    except CustomExceptionHandler as e:
-        logger.exception(f"Custom Exception in update organization: {e}")
-        response_obj = get_response(eval(str(e)))
-
+        return JsonResponse({"error": "Organization not found"})
     except Exception as e:
         logger.exception(f"Exception in update organization: {e}")
-        response_obj = get_response(generic_error_2)
-
-    logger.info("Response in update organization --> %s", response_obj)
-    return JsonResponse(response_obj)
+        return JsonResponse({"error": "An error occurred while updating organization"})

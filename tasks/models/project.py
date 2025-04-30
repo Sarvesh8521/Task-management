@@ -15,9 +15,9 @@ class Project(models.Model):
 
     id = models.BigAutoField(primary_key=True, unique=True, editable=False)
     name = models.CharField(max_length=255, unique=True)  
-    super_user = models.ForeignKey( settings.AUTH_USER_MODEL,on_delete=models.CASCADE, related_name="supervised_projects")
-    sub_user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, null=True, blank=True, default=None, related_name="sub_projects")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 
+    super_user = models.IntegerField()
+    sub_user = models.IntegerField()
+    user = models.IntegerField() 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="planned")
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

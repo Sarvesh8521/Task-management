@@ -4,7 +4,7 @@ from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 
 from tasks.models import Organization
-from tasks.serializers import OrganizationSerializer,CustomExceptionHandler,UserNotFoundException,get_response, success,generic_error
+from tasks.serializers import OrganizationSerializer,CustomExceptionHandler,UserNotFoundException,get_response, success
 
 
 logger = logging.getLogger("django")
@@ -12,8 +12,8 @@ logger = logging.getLogger("django")
 @transaction.atomic
 def create_or_update_organization_service(request_data):
     try:
-        organization = Organization.objects.filter(name=request_data.get("name")).first()
         
+        organization = Organization.objects.filter(name=request_data.get("name")).first()
         serializer = OrganizationSerializer(instance=organization, data=request_data(organization))
         if serializer.is_valid(raise_exception=True):
             organization = serializer.save()
@@ -21,7 +21,7 @@ def create_or_update_organization_service(request_data):
     
     except ValidationError as e:
         logger.error(f"Validation error: {str(e)}")
-        raise CustomExceptionHandler(e.detail)
+        raise Exception (e.detail)
     
     except Exception as e:
         logger.exception(f"Exception {e}")
