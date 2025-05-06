@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework import status
+import requests
 from user_details.models import Profile
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -87,24 +88,6 @@ def update_profile(request,user_id):
     except Exception as e:
         logger.exception(f"Exception in update profile: {e}")
         return JsonResponse({"error": str(e)}, status=500)
-
-
-    # logger.info("update_profile")
-    # response_data = None
-    # try:
-    #     user = request.user
-    #     profile = user.profile
-    #     serializer = ProfileSerializer(profile, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         response_data = serializer.data
-    #         return JsonResponse(response_data, safe=False)
-    #     else:
-    #         return JsonResponse(serializer.errors, status=400, safe=False)
-    # except Exception as e:
-    #     logger.exception(e)
-    #     response_data = {'error': 'An error occurred'}
-    #     return JsonResponse(response_data, status=500)
 
 
 @api_view(['DELETE'])

@@ -54,10 +54,7 @@ def update_organization(request, org_id):
     try:
         organization = Organization.objects.get(id=org_id)
         if organization.super_user != request.user.id:
-            return JsonResponse(
-                {"error": "You don't have permission to update this organization"},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            return JsonResponse({"error": "You don't have permission to update this organization"},status=status.HTTP_403_FORBIDDEN)
         serializer = OrganizationSerializer(organization, data=request.data)
         if serializer.is_valid():
             organization = serializer.save()
@@ -68,3 +65,48 @@ def update_organization(request, org_id):
     except Exception as e:
         logger.exception(f"Exception in update organization: {e}")
         return JsonResponse({"error": "An error occurred while updating organization"})
+    
+
+
+@csrf_exempt
+@swagger_auto_schema(
+    method="delete",
+    responses={200: OrganizationSerializer},
+    request_body=OrganizationSerializer,
+    operation_id="Delete Organization"
+)
+@api_view(["DELETE"])
+def delete_organization(request, org_id):
+    logger.info("Request to delete organization")
+    try:
+        organization = Organization.objects.get(id=org_id)
+        if organization.super_user != request.user.id:
+            return JsonResponse({"error": "You don't have permission to delete this organization"},status=status.HTTP_403_FORBIDDEN)
+        organization.delete()
+        return JsonResponse({"message": "Organization deleted"})
+    except Organization.DoesNotExist:
+        return JsonResponse({"error": "Organization not found"})
+    except Exception as e:
+        logger.exception(f"Exception in delete organization: {e}")
+        return JsonResponse({"error": "An error occurred while deleting organization"})
+
+
+@csrf_exempt
+@swagger_auto_schema(
+    method="get",
+    responses={200: OrganizationSerializer},
+    # request_body=OrganizationSerializer,
+    operation_id="Get Organization"
+)
+@api_view(["GET"])
+def get_organization(request, org_id):    
+    logger.info("Request to get organization")
+    try:
+        organization = Organization.objects.get(id=org_id)
+        serializer = OrganizationSerializer(organization)
+        return JsonResponse(serializer.data)
+    except Organization.DoesNotExist:
+        return JsonResponse({"error": "Organization not found"})
+    except Exception as e:
+        logger.exception(f"Exception in get organization: {e}")
+        return JsonResponse({"error": "An error occurred while getting organization"})

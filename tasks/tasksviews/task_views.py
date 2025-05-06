@@ -79,11 +79,11 @@ def assign_task(request, task_id, user_id):
         logger.exception(f"Exception in assign task: {e}")
         return JsonResponse(get_response("generic_error"))
 
-@csrf_exempt
-@swagger_auto_schema(
-    method="get",
-    operation_id="Get All Tasks"
-)
+# @csrf_exempt
+# @swagger_auto_schema(
+#     method="get",
+#     operation_id="Get All Tasks"
+# )
 @api_view(["GET"])
 def get_tasks(request):
     logger.info(log_info_message(request, "Request to get all tasks"))
@@ -112,3 +112,21 @@ def search_tasks(request):
         logger.exception(f"Exception in search tasks: {e}")
         return JsonResponse(get_response("generic_error"))
 
+
+@csrf_exempt
+@swagger_auto_schema(
+    method="delete",
+    operation_id="Delete Task"
+)
+@api_view(["DELETE"])
+def delete_task(request, task_id):
+    logger.info(log_info_message(request, f"Request to delete task {task_id}"))
+    try:
+        task = Task.objects.get(id=task_id)
+        task.delete()
+        return JsonResponse({"message": "Task deleted"})
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"})
+    except Exception as e:
+        logger.exception(f"Exception in delete task: {e}")
+        return JsonResponse(get_response("generic_error"))

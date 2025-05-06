@@ -14,7 +14,7 @@ from unittest import mock
 import pytest
 
 
-@mock.patch('user_details.views.UserSerializer.')   
+@mock.patch('user_details.userviews.user_views.requests')   
 class TestUserViews(unittest.TestCase):
     data={
         "user_name": "Laddo",
@@ -30,22 +30,23 @@ class TestUserViews(unittest.TestCase):
     
 
     def postreq(self):
-        with mock.patch('user_details.views.requests.post'):
+        with mock.patch('user_details.userviews.user_views.requests.post'):
             # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
             return self.client.post(self.url, data=json.dumps(self.user_data), content_type="application/json")
         
-    # @pytest.mark.django_db
-    # def test_create_user(self):
-    #     response = self.postreq()
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    @pytest.mark.django_db
+    def test_create_user(self):
+        response = self.postreq()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
            
         
 
 
 
-@mock.patch('user_details.views.requests')
+@mock.patch('user_details.userviews.user_views.requests')
 class TestUpdateUserViews(unittest.TestCase):
     data={
+        'id': 1,
         "user_name": "quinton_k",                      
         "password": "Quinton@2025",                    
         "email_id": "quinton.k@example.com",           
@@ -61,71 +62,94 @@ class TestUpdateUserViews(unittest.TestCase):
     
 
     def putreq(self):
-        with mock.patch('user_details.views.requests.put'):
+        with mock.patch('user_details.userviews.user_views.requests.put'):
             # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
             return self.client.put(self.url, data=json.dumps(self.user_data), content_type="application/json")
 
-    # @pytest.mark.django_db
-    # def test_update_user(self):
-    #     response = self.putreq()
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)   
+    @pytest.mark.django_db
+    def test_update_user(self):
+        response = self.putreq()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)   
             
 
-# @mock.patch('user_details.views.requests')
-# class TestDeleteUserViews(unittest.TestCase):
-#     data={
-#         "user_name": "quinton_k",                      
-#         "password": "Quinton@2025",                    
-#         "email_id": "quinton.k@example.com",           
-#         "first_name": "Quinton",
-#         "last_name": "Kapoor",     
+
+
+@mock.patch('user_details.userviews.user_views.requests')
+class TestDeleteUserViews(unittest.TestCase):
+    data={
+        'id': 1,
+        "user_name": "quinton_k",                      
+        "password": "Quinton@2025",                    
+        "email_id": "quinton.k@example.com",           
+        "first_name": "Quinton",
+        "last_name": "Kapoor",     
     
-# }       
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.url = reverse('delete_user')
-#         self.user_data = self.data
+}       
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('delete_user')
+        self.user_data = self.data
 
     
 
-#     def deletereq(self):
-#         with mock.patch('user_details.views.requests.delete'):
-#             # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
-#             return self.client.delete(self.url)
+    def deletereq(self):
+        with mock.patch('user_details.userviews.user_views.requests.delete'):
+            # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
+            return self.client.delete(self.url,)
 
 
-# @mock.patch('user_details.views.requests')
-# class TestGetUserViews(unittest.TestCase): 
-#     data={
-#         "user_name": "quinton_k",                      
-#         "password": "Quinton@2025",                    
-#         "email_id": "quinton.k@example.com",           
-#         "first_name": "Quinton",
-#         "last_name": "Kapoor",
-#     }  
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.url = reverse('get_user')
+    @pytest.mark.django_db
+    def test_delete_user(self):
+        response = self.deletereq()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)        
 
-#     def getreq(self):
-#         with mock.patch('user_details.views.requests.get'):
-#             # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
-#             return self.client.get(self.url)
 
-# @mock.patch('user_details.views.requests')
-# class TestSearchUserViews(unittest.TestCase):
-#     data={
-#         "user_name": "quinton_k",                      
-#         "password": "Quinton@2025",                    
-#         "email_id": "quinton.k@example.com",           
-#         "first_name": "Quinton",
-#         "last_name": "Kapoor",
-#     }  
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.url = reverse('search_user')
+@mock.patch('user_details.userviews.user_views.requests')
+class TestGetUserViews(unittest.TestCase): 
+    data={
+        'id': 1,
+        "user_name": "quinton_k",                      
+        "password": "Quinton@2025",                    
+        "email_id": "quinton.k@example.com",           
+        "first_name": "Quinton",
+        "last_name": "Kapoor",
+    }  
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('get_user')
 
-#     def getreq(self):
-#         with mock.patch('user_details.views.requests.get'):
-#             # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
-#             return self.client.get(self.url)
+    def getreq(self):
+        with mock.patch('user_details.userviews.user_views.requests.get'):
+            # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
+            return self.client.get(self.url)
+        
+
+    @pytest.mark.django_db
+    def test_get_user(self):
+        response = self.getreq()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)   
+
+@mock.patch('user_details.userviews.user_views.requests')
+class TestSearchUserViews(unittest.TestCase):
+    data={
+        'id': 1,
+        "user_name": "quinton_k",                      
+        "password": "Quinton@2025",                    
+        "email_id": "quinton.k@example.com",           
+        "first_name": "Quinton",
+        "last_name": "Kapoor",
+    }  
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('search_user')
+
+    def getreq(self):
+        with mock.patch('user_details.userviews.user_views.requests.get'):
+            # requests_mock.post("https://external-service.com/endpoint", json={"key": "value"}, status_code=200)
+            return self.client.get(self.url) 
+        
+
+    @pytest.mark.django_db
+    def test_search_user(self):
+        response = self.getreq()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)    

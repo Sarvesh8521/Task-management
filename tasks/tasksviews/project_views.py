@@ -8,6 +8,7 @@ import logging
 
 from tasks.models import Project
 from tasks.serializers import ProjectSerializer
+
 from tasks.serializers.utils import log_info_message
 
 
@@ -36,66 +37,6 @@ def create_project(request):
 
 
 
-# @csrf_exempt
-# @swagger_auto_schema(
-#     method="put",
-#     request_body=ProjectSerializer,
-#     responses={200: ProjectSerializer},
-#     operation_id="Update Project"
-# )
-# @api_view(["PUT"])
-# def update_project(request):
-#     logger.info(log_info_message(request, "Request to update project"))
-#     response_obj = None
-
-#     try:
-#         project_id = request.data.get("id")
-#         if not project_id:
-#             return JsonResponse({"error": "Project ID is required."}, status=400)
-
-#         project = Project.objects.get(id=project_id)
-#         serializer = ProjectSerializer(project, data=request.data)
-#         if serializer.is_valid():
-#             project = serializer.save()
-#             return JsonResponse(serializer.data, status=200)
-#         else:
-#             return JsonResponse(serializer.errors, status=400)
-
-#     except Project.DoesNotExist:
-#         response_obj = {"error": "Project not found."}
-#         return JsonResponse(response_obj, status=404)
-
-#     except Exception as e:
-#         logger.exception(f"Exception in update project: {e}")
-#         response_obj = {"error": "Something went wrong."}
-#     return JsonResponse(response_obj, status=500)
-
-
-
-# @api_view(["PUT"])
-# def update_project(request):
-#     logger.info((request, "Request to update project"))
-#     response_obj = None
-
-#     try:
-#         project = Project.objects.get(id)
-#         project_id = request.data.get("id")
-#         serializer = ProjectSerializer(project, data=request.data, partial=True)  # `partial=True` allows updating only some fields
-#         if serializer.is_valid():
-#             project = serializer.save()
-#             return JsonResponse(serializer.data, status=200)
-#         else:
-#             return JsonResponse(serializer.errors, status=400)
-
-#     except Project.DoesNotExist:
-#         response_obj = {"error": "Project not found."}
-#         return JsonResponse(response_obj, status=404)
-
-#     except Exception as e:
-#         logger.exception(f"Exception in update project: {e}")
-#         response_obj = {"error": "Something went wrong."}
-    # return JsonResponse(response_obj, status=500)
-
 @api_view(["PUT"])
 def update_project(request, project_id):
     logger.info("Request to update project")
@@ -111,3 +52,31 @@ def update_project(request, project_id):
     except Exception as e:
         logger.exception(f"Exception in update project: {e}")
         return JsonResponse("generic_error")
+    
+
+@api_view(["DELETE"])
+def delete_project(request, project_id):    
+    logger.info("Request to delete project")
+    try:
+        project = Project.objects.get(id=project_id)
+        project.delete()
+        return JsonResponse({"message": "Project deleted"})
+    except Project.DoesNotExist:
+        return JsonResponse({"error": "Project not found"})
+    except Exception as e:
+        logger.exception(f"Exception in delete project: {e}")
+        return JsonResponse({"error": "An error occurred while deleting project"})
+    
+
+
+
+@api_view(["GET"])
+def get_all_projects(request):    
+    logger.info("Request to get all projects")
+    try:
+        projects = Project.objects.all()
+        serializer = ProjectSerializer(projects, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    except Exception as e:
+        logger.exception(f"Exception in get all projects: {e}")
+        return JsonResponse({"error": "An error occurred while getting all projects"})
