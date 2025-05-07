@@ -1,0 +1,31 @@
+      containers:
+      - name: web
+        image: gcr.io/YOUR_PROJECT_ID/task-management:v1
+        ports:
+        - containerPort: 8000
+        env:
+          ...
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+      - name: db
+        image: postgres:13
+        env:
+          ...
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-data
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"

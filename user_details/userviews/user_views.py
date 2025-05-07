@@ -123,11 +123,7 @@ def delete_user(request, user_id):
     
 
 @csrf_exempt
-@swagger_auto_schema(
-    method="search",
-    responses={200: UserSerializer},
-    operation_id="Search User"
-)
+@swagger_auto_schema(method="get",responses={200: UserSerializer}, operation_id="Search User")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def search_user(request):

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-management-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: task-management
+    tier: web  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: task-management
+    tier: db  

@@ -4,9 +4,6 @@ from user_details.userviews import user_views, profile_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-
-
-
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
@@ -31,7 +28,8 @@ urlpatterns = [
         path('update/<int:org_id>/', organisation_views.update_organization, name='update_organization'),
         path('search/<int:org_id>', organisation_views.get_organization, name='get_organization'),
         path('delete/<int:org_id>/', organisation_views.delete_organization, name='delete_organization'), 
-        path('all/', organisation_views.get_organizations, name='get_organizations'),  
+        # path('all/', organisation_views.get_organizations, name='get_organizations'),  
+        path('get/<int:org_id>/', organisation_views.get_organization, name='get_organization'),
     ])),
 
 
@@ -49,7 +47,8 @@ urlpatterns = [
         path('update/<int:task_id>/', task_views.update_task, name='update_task'),
         path('assign/<int:task_id>/<int:user_id>/', task_views.assign_task, name='assign_task'),
         path('all/', task_views.get_tasks, name='get_tasks'),
-        path('get/<int:task_id>/', task_views.get_task, name='get_task'),
+        # path('get/<int:task_id>/', task_views.get_task, name='get_task'),
+        path('all/', task_views.get_tasks, name='get_tasks'),
         path('search/', task_views.search_tasks, name='search_tasks'),
         path('delete/<int:task_id>/', task_views.delete_task, name='delete_task'),
     ])),
