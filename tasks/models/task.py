@@ -12,12 +12,30 @@ class Task(models.Model):
         ("blocked", "Blocked"),
     ]
 
+    ISSUE_TYPE_CHOICES = [
+        ("epic", "Epic"),
+        ("story", "Story"),
+        ("task", "Task"),
+        ("bug", "Bug"),
+        ("subtask", "Sub-task"),
+    ]
+
+    PRIORITY_CHOICES = [
+        ("highest", "Highest"),
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
+        ("lowest", "Lowest"),
+    ]
+
     id = models.BigAutoField(unique=True, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=250)
     project = models.IntegerField()
     users = models.IntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="todo")
+    issue_type = models.CharField(max_length=20, choices=ISSUE_TYPE_CHOICES, default="task")
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default="medium")
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     sprint = models.CharField(max_length=100, null=True, blank=True, default="1")

@@ -15,7 +15,9 @@ class TaskSerializer(serializers.ModelSerializer):
     project = serializers.IntegerField()  
     users = serializers.IntegerField( )
     # user = serializers.IntegerField(source= 'user_id')
-    status = serializers.ChoiceField(["todo", "in-progress", "completed"], default="todo")
+    status = serializers.ChoiceField(choices=Task.STATUS_CHOICES, default="todo")
+    issue_type = serializers.ChoiceField(choices=Task.ISSUE_TYPE_CHOICES, default="task")
+    priority = serializers.ChoiceField(choices=Task.PRIORITY_CHOICES, default="medium")
     start_date = serializers.DateField(allow_null=True, required=False)
     end_date = serializers.DateField(allow_null=True, required=False)
     sprint = serializers.CharField(max_length=100, allow_blank=True, required=False, default="1") 
@@ -27,7 +29,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         read_only_fields = ['creation_date', 'updation_date', 'is_active']
-        fields = ['id', 'name','description', 'project', 'users', 'status', 'start_date', 'end_date', 'sprint', 'release_version', 'creation_date', 'updation_date', 'is_active']
+        fields = ['id', 'name','description', 'project', 'users', 'status', 'issue_type', 'priority', 'start_date', 'end_date', 'sprint', 'release_version', 'creation_date', 'updation_date', 'is_active']
 
     def validate_project(self, value):
         if not Project.objects.filter(id=value).exists():
@@ -58,7 +60,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
     def validate_status(self, value):
-        allowed_statuses = ["todo", "in-progress", "completed"]
+        allowed_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
         if value not in allowed_statuses:
             raise ValidationError(f"Invalid status. Allowed statuses are: {', '.join(allowed_statuses)}.")
         return value
