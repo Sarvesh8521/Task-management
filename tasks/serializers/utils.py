@@ -1,11 +1,13 @@
-def log_info_message(message):
-    print(f"LOG: {message}")
+import logging
 
-def get_response(data, message="Success"):
-    return {"data": data, "message": message}
+logger = logging.getLogger("django")
 
-def CustomExceptionHandler(exc, context):
-    return {"error": str(exc)}
 
-def generic_error_2():
-    return {"error": "Something went wrong"}
+def log_info_message(request, message):
+    """Format a log message with request method and path."""
+    return f"{request.method} {request.path} - {message}"
+
+
+def get_response(message, status="error"):
+    """Create a standardized response dict."""
+    return {"status": status, "message": message}

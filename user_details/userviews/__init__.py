@@ -1,2 +1,3 @@
-# from .user_views import *
-# from .profile_views import *
+from . import user_views, profile_views
+
+__all__ = ["user_views", "profile_views"]

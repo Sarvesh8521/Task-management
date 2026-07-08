@@ -1,7 +1,6 @@
 from django.db import models
 from .project import Project
-from django.conf import settings
-    
+
 
 class Task(models.Model):
     STATUS_CHOICES = [
@@ -28,9 +27,9 @@ class Task(models.Model):
         ("lowest", "Lowest"),
     ]
 
-    id = models.BigAutoField(unique=True, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    description = models.TextField(max_length=250)
+    description = models.TextField(blank=True, default="")
     project = models.IntegerField()
     users = models.IntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="todo")
@@ -44,5 +43,15 @@ class Task(models.Model):
     updation_date = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['-creation_date']
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['project']),
+            models.Index(fields=['users']),
+            models.Index(fields=['priority']),
+            models.Index(fields=['is_active']),
+        ]
+
     def __str__(self):
-        return self.description  
+        return self.name
